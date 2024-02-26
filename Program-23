@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_REQUESTS 100
+
+void scan(int requests[], int n, int head, char direction) {
+    int total_head_movements = 0;
+    int current_track = head;
+    int i,j;
+
+    // Sort the requests
+    for ( i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (requests[j] > requests[j + 1]) {
+                int temp = requests[j];
+                requests[j] = requests[j + 1];
+                requests[j + 1] = temp;
+            }
+        }
+    }
+
+    // Find the index of the head position
+    int head_index = 0;
+    while (head_index < n && requests[head_index] < head) {
+        head_index++;
+    }
+
+    // Moving in the specified direction
+    if (direction == 'l') {
+        for (i = head_index; i >= 0; i--) {
+            printf("%d -> ", requests[i]);
+            total_head_movements += abs(requests[i] - current_track);
+            current_track = requests[i];
+        }
+        total_head_movements += current_track;
+        printf("0 -> ");
+        current_track = 0;
+        for (i = head_index + 1; i < n; i++) {
+            printf("%d -> ", requests[i]);
+            total_head_movements += abs(requests[i] - current_track);
+            current_track = requests[i];
+        }
+    } else if (direction == 'r') {
+        for (i = head_index; i < n; i++) {
+            printf("%d -> ", requests[i]);
+            total_head_movements += abs(requests[i] - current_track);
+            current_track = requests[i];
+        }
+        total_head_movements += abs(current_track - 199);
+        printf("199 -> ");
+        current_track = 199;
+        for (i = head_index - 1; i >= 0; i--) {
+            printf("%d -> ", requests[i]);
+            total_head_movements += abs(requests[i] - current_track);
+            current_track = requests[i];
+        }
+    }
+
+    printf("\nTotal head movements: %d\n", total_head_movements);
+}
+
+int main() {
+    int requests[MAX_REQUESTS];
+    int n,i, head;
+    char direction;
+
+    printf("Enter the number of requests: ");
+    scanf("%d", &n);
+
+    printf("Enter the requests: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &requests[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter the direction (l for left, r for right): ");
+    scanf(" %c", &direction);
+
+    scan(requests, n, head, direction);
+
+    return 0;
+}
